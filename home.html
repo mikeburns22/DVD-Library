@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html>
+    <head>
+
+      <!-- Required Meta Tags -->
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <title>DVD Library</title>
+
+        <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+
+    <!-- Additional CSS here -->
+    </head>
+    <body>
+        <div class="container my-3">
+            <div class="main">
+                <form id="searchForm" class="d-flex">
+                    <button type="button"
+                            class="btn btn-primary me-auto"
+                            onclick="hideExceptFor('add')">
+                        Create DVD
+                    </button>
+
+                    <button type="button"
+                            class="btn btn-primary mx-3"
+                            onclick="loadFilteredDvds()">
+                        Search
+                    </button>
+
+                    <select id="searchType" class="form-select w-25 mx-3" required>
+                        <option value="" selected="true" disabled>Search</option>
+                        <option value="title">Title</option>
+                        <option value="year">Release Date</option>
+                        <option value="director">Director</option>
+                        <option value="rating">Rating</option>
+                    </select>
+
+                    <input type="text"
+                           id="searchString"
+                           class="form-control w-25 mx-3"
+                           required>
+                </form>
+            </div>
+
+            <div class="edit mt-3">
+                <h1 id="editTitleHeader">Edit Dvd:</h1>
+            </div>
+            <h1 class="add mt-3">Create Dvd</h1>
+            <h1 class="disp mt-3" id="dispTitleHeader"></h1>
+
+            <hr>
+
+            <ul class="list-group mb-1" id="errorMessage"></ul>
+
+            <div class="main" id="dvdList">
+                <table id="dvdTable" class="table table-hover text-center">
+                    <thead>
+                        <tr>
+                            <th width="30%">Title</th>
+                            <th width="20%">Release Date</th>
+                            <th width="15%">Director</th>
+                            <th width="15%">Rating</th>
+                            <th width="20%" style="max-width: 150px;"></th>
+                        </tr>
+                    </thead>
+                    <tbody id="contentRows"></tbody>
+                </table>
+            </div>
+
+            <div class="edit">
+                <form role="form" id="editForm">
+                    <div class="row mb-3">
+                        <label for="editTitle" class="col-md-2 control-label">
+                            Dvd Title:
+                        </label>
+
+                        <div class="col-md-10">
+                            <input type="text"
+                                   class="form-control"
+                                   id="editTitle"
+                                   required>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <label for="editReleaseYear" class="col-md-2 control-label">
+                            Release Year:
+                        </label>
+
+                        <div class="col-md-10">
+                            <input type="text"
+                                   pattern="[1-9][0-9]{3}"
+                                   class="form-control"
+                                   id="editReleaseYear"
+                                   required>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <label for="editDirector" class="col-md-2 control-label">
+                            Director:
+                        </label>
+
+                        <div class="col-md-10">
+                            <input type="text"
+                                   class="form-control"
+                                   id="editDirector">
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <label for="editRating" class="col-md-2 control-label">
+                            Rating:
+                        </label>
+
+                        <div class="col-md-10">
+                            <select type="text"
+                                   class="form-select"
+                                   id="editRating"
+                                   required>
+                                <option>G</option>
+                                <option>PG</option>
+                                <option>PG-13</option>
+                                <option>R</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <label for="editNotes" class="col-md-2 control-label">
+                            Notes:
+                        </label>
+
+                        <div class="col-md-10">
+                            <textarea class="form-control"
+                                    rows="5"
+                                    id="editNotes"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="d-flex mb-3 justify-content-end">
+                        <input type="hidden" id="editId">
+                        <div class="mx-3">
+                            <button type="button"
+                                    id="editCancelButton"
+                                    class="btn btn-danger"
+                                    onclick="hideExceptFor('main')">
+                                        Cancel
+                            </button>
+                        </div>
+                        <div>
+                            <button type="button"
+                                id="updateButton"
+                                class="btn btn-success"
+                                onclick="editDvd()">
+                                    Update
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="add">
+                <form role="form" id="addForm">
+                    <div class="row mb-3">
+                        <label for="addTitle" class="col-md-2 control-label">
+                            Dvd Title:
+                        </label>
+
+                        <div class="col-md-10">
+                            <input type="text"
+                                   class="form-control"
+                                   id="addTitle"
+                                   required>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <label for="addReleaseYear" class="col-md-2 control-label">
+                            Release Year:
+                        </label>
+
+                        <div class="col-md-10">
+                            <input type="text"
+                                   pattern="[1-9][0-9]{3}"
+                                   class="form-control"
+                                   id="addReleaseYear"
+                                   required>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <label for="addDirector" class="col-md-2 control-label">
+                            Director:
+                        </label>
+
+                        <div class="col-md-10">
+                            <input type="text"
+                                   class="form-control"
+                                   id="addDirector">
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <label for="addRating" class="col-md-2 control-label">
+                            Rating:
+                        </label>
+
+                        <div class="col-md-10">
+                            <select type="text"
+                                   class="form-select"
+                                   id="addRating"
+                                   required>
+                                <option>G</option>
+                                <option>PG</option>
+                                <option>PG-13</option>
+                                <option>R</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <label for="addNotes" class="col-md-2 control-label">
+                            Notes:
+                        </label>
+
+                        <div class="col-md-10">
+                            <textarea class="form-control"
+                                    rows="5"
+                                    id="addNotes"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="d-flex mb-3 justify-content-end">
+                        <div class="mx-3">
+                            <button type="button"
+                                    id="addCancelButton"
+                                    class="btn btn-danger"
+                                    onclick="hideExceptFor('main')">
+                                        Cancel
+                            </button>
+                        </div>
+                        <div>
+                            <button type="button"
+                                id="addButton"
+                                class="btn btn-success"
+                                onclick="addDvd()">
+                                    Create
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="disp">
+                <div class="row">
+                    <b class="col-sm-3">Release Year</b>
+                    <p id="dispReleaseYear" class="col"></p>
+                </div>
+
+                <div class="row">
+                    <b class="col-sm-3">Director</b>
+                    <p id="dispDirector" class="col"></p>
+                </div>
+
+                <div class="row">
+                    <b class="col-sm-3">Rating</b>
+                    <p id="dispRating" class="col"></p>
+                </div>
+
+                <div class="row justify-content-start">
+                    <b class="col-sm-3">Notes</b>
+                    <p id="dispNotes" class="col"></p>
+                </div>
+
+                <button class="btn btn-primary"
+                    onclick="hideExceptFor('main')">Back</button>
+            </div>
+        </div>
+
+        <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
+        <script src="js/home.js"></script>
+    </body>
+</html>
